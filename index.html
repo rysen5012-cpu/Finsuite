@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinSuite</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* ================================
+       ROOT VARIABLES
+    ================================= */
+    :root {
+      --sw: 240px;
+      --accent: #6c63ff;
+      --accent-d: #584cff;
+      --accent-g: linear-gradient(135deg,#8f85ff,#38bdf8);
+      --t1: #ffffff;
+      --t2: #b4b4c7;
+      --t3: #7c7c99;
+      --b1: rgba(255,255,255,.06);
+      --b2: rgba(255,255,255,.12);
+      --bg: #070711;
+    }
+
+    /* ================================
+       GLOBAL
+    ================================= */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--t1);
+      font-family: Inter, sans-serif;
+      overflow-x: hidden;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ================================
+       SIDEBAR
+    ================================= */
+    .sidebar {
+      width: var(--sw);
+      background: rgba(6,6,16,.95);
+      border-right: 1px solid var(--b1);
+      padding: 20px;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      overflow-y: auto;
+    }
+
+    .logo-mark {
+      font-family: 'Syne', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      background: linear-gradient(135deg,#8f85ff,#38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-item {
+      padding: 12px;
+      border-radius: 12px;
+      margin-top: 10px;
+      background: rgba(255,255,255,.03);
+      cursor: pointer;
+      transition: .25s;
+    }
+
+    .nav-item:hover {
+      background: rgba(108,99,255,.18);
+    }
+
+    /* ================================
+       MAIN
+    ================================= */
+    .main {
+      margin-left: var(--sw);
+      width: calc(100% - var(--sw));
+      padding: 30px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: 'Syne', sans-serif;
+    }
+
+    .glass-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--b1);
+      border-radius: 24px;
+      padding: 24px;
+      backdrop-filter: blur(18px);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--t2);
+      font-size: 14px;
+    }
+
+    .ibox {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--b1);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .affix {
+      padding: 0 14px;
+      color: var(--t3);
+    }
+
+    input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: white;
+      height: 52px;
+      padding: 0 14px;
+    }
+
+    .btn-calc {
+      width: 100%;
+      margin-top: 16px;
+      border: none;
+      border-radius: 16px;
+      padding: 16px;
+      color: white;
+      background: linear-gradient(135deg,#6c63ff,#38bdf8);
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--b1);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--t3);
+      margin-bottom: 6px;
+    }
+
+    .stat-val {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .chart-zone {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .donut-wrap {
+      width: 220px;
+    }
+
+    /* ================================
+       MOBILE
+    ================================= */
+    @media(max-width:768px){
+      .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+      }
+
+      .app {
+        flex-direction: column;
+      }
+
+      .main {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      .grid-2,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo-mark">FinSuite</div>
+
+    <div class="nav-item">SIP Calculator</div>
+    <div class="nav-item">EMI Calculator</div>
+    <div class="nav-item">CAGR Calculator</div>
+    <div class="nav-item">Goal Planner</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar">
+      <div>
+        <div class="page-title">SIP Calculator</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+
+      <!-- INPUT CARD -->
+      <div class="glass-card">
+
+        <div class="field">
+          <label>Monthly Investment</label>
+          <div class="ibox">
+            <div class="affix">₹</div>
+            <input type="number" id="sip-m" value="5000">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Expected Return (%)</label>
+          <div class="ibox">
+            <input type="number" id="sip-r" value="12">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Time Period (Years)</label>
+          <div class="ibox">
+            <input type="number" id="sip-y" value="20">
+          </div>
+        </div>
+
+        <button class="btn-calc" onclick="calcSIP()">
+          Calculate SIP
+        </button>
+
+      </div>
+
+      <!-- RESULT CARD -->
+      <div class="glass-card">
+
+        <div class="stats">
+
+          <div class="stat">
+            <div class="stat-label">Invested</div>
+            <div class="stat-val" id="sip-v-inv">₹0</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Returns</div>
+            <div class="stat-val" id="sip-v-ret">₹0</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Total</div>
+            <div class="stat-val" id="sip-v-tot">₹0</div>
+          </div>
+
+        </div>
+
+        <div class="chart-zone">
+          <div class="donut-wrap">
+            <canvas id="donut-sip"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+
+/* ================================
+   FORMATTER
+================================ */
+function fmt(n){
+  return '₹' + Math.round(n).toLocaleString('en-IN');
+}
+
+/* ================================
+   SIP FORMULA
+================================ */
+function sipFV(P, annualRate, years){
+  const r = annualRate / 100 / 12;
+  const n = years * 12;
+
+  return P * ((Math.pow(1+r,n)-1)/r) * (1+r);
+}
+
+/* ================================
+   CHART
+================================ */
+let chart = null;
+
+function renderChart(inv, ret){
+
+  const ctx = document.getElementById('donut-sip');
+
+  if(chart){
+    chart.destroy();
+  }
+
+  chart = new Chart(ctx, {
+    type:'doughnut',
+    data:{
+      labels:['Invested','Returns'],
+      datasets:[{
+        data:[inv, ret],
+        backgroundColor:[
+          'rgba(136,136,170,.9)',
+          'rgba(62,207,142,.9)'
+        ],
+        borderWidth:0
+      }]
+    },
+    options:{
+      plugins:{
+        legend:{ display:false }
+      },
+      cutout:'72%'
+    }
+  });
+}
+
+/* ================================
+   MAIN CALCULATOR
+================================ */
+function calcSIP(){
+
+  const P = +document.getElementById('sip-m').value;
+  const r = +document.getElementById('sip-r').value;
+  const y = +document.getElementById('sip-y').value;
+
+  const total = sipFV(P,r,y);
+  const invested = P * 12 * y;
+  const returns = total - invested;
+
+  document.getElementById('sip-v-inv').textContent = fmt(invested);
+  document.getElementById('sip-v-ret').textContent = fmt(returns);
+  document.getElementById('sip-v-tot').textContent = fmt(total);
+
+  renderChart(invested, returns);
+}
+
+calcSIP();
+
+</script>
+
+</body>
+          </html>
