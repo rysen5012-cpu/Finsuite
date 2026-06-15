@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FinSuite Pro</title>
+
+<!-- Google AdSense Verification -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXX"
+     crossorigin="anonymous"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+...
+<style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FinSuite Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Mono:wght@300;400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+/* ── TOKENS ─────────────────────────────────── */
+:root{
+  --bg:#07070f;--bg1:#0c0c1a;--bg2:#111125;--bg3:#161630;
+  --glass:rgba(12,12,26,.72);--glass-h:rgba(18,18,38,.88);
+  --accent:#6c63ff;--accent-d:#5448e0;
+  --accent-g:rgba(108,99,255,.18);--accent-gl:rgba(108,99,255,.08);
+  --green:#3ecf8e;--cyan:#38bdf8;--gold:#f4c95d;--rose:#f76a6a;
+  --t1:#eaeaf5;--t2:#8888aa;--t3:#4a4a6a;
+  --b1:rgba(108,99,255,.10);--b2:rgba(108,99,255,.26);--b3:rgba(108,99,255,.55);
+  --sw:242px;--blur:20px;
+  --ease:cubic-bezier(.4,0,.2,1);
+  --r1:8px;--r2:14px;--r3:20px;--r4:26px;
+}
+
+/* ── RESET ──────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{background:var(--bg);color:var(--t1);font-family:'Plus Jakarta Sans',sans-serif;
+  min-height:100vh;overflow-x:hidden;line-height:1.6;
+  -webkit-tap-highlight-color:transparent}
+input[type=number],input[type=text],select,textarea{font-size:max(16px,1em)}
+
+/* ── ANIMATED BG MESH ───────────────────────── */
+.bg-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(88px);will-change:transform;
+  animation:drift var(--d,22s) infinite alternate var(--ease)}
+.orb-1{--d:22s;width:600px;height:600px;top:-180px;left:-140px;
+  background:radial-gradient(circle,rgba(108,99,255,.22) 0%,transparent 70%)}
+.orb-2{--d:30s;width:480px;height:480px;bottom:-80px;right:-80px;
+  background:radial-gradient(circle,rgba(56,189,248,.14) 0%,transparent 70%);animation-delay:-10s}
+.orb-3{--d:36s;width:380px;height:380px;top:46%;left:50%;
+  background:radial-gradient(circle,rgba(62,207,142,.09) 0%,transparent 70%);animation-delay:-18s}
+@keyframes drift{
+  0%{transform:translate(0,0) scale(1)}
+  33%{transform:translate(36px,-26px) scale(1.04)}
+  66%{transform:translate(-16px,20px) scale(.97)}
+  100%{transform:translate(24px,8px) scale(1.03)}}
+
+/* ── SIDEBAR ────────────────────────────────── */
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:var(--sw);
+  background:rgba(6,6,16,.96);backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border-right:1px solid rgba(108,99,255,.15);
+  display:flex;flex-direction:column;z-index:200;
+  box-shadow:4px 0 32px rgba(0,0,0,.4);
+  transition:transform .32s var(--ease)}
+.logo-wrap{padding:24px 20px 18px;border-bottom:1px solid var(--b1);position:relative;overflow:hidden}
+.logo-wrap::after{content:'';position:absolute;top:-40px;left:-40px;
+  width:160px;height:160px;
+  background:radial-gradient(circle,rgba(108,99,255,.12) 0%,transparent 70%);pointer-events:none}
+.logo-mark{font-family:'Syne',sans-serif;font-size:21px;font-weight:800;letter-spacing:-.03em;
+  background:linear-gradient(135deg,#8f85ff,#38bdf8);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-sub{font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);
+  letter-spacing:.14em;margin-top:3px;text-transform:uppercase}
+
+/* Currency block */
+.cur-block{padding:12px 14px;border-bottom:1px solid var(--b1);background:rgba(108,99,255,.03)}
+.cur-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);
+  letter-spacing:.12em;text-transform:uppercase;margin-bottom:7px}
+.cur-select{
+  width:100%;background:rgba(255,255,255,.04);
+  border:1px solid var(--b2);border-radius:10px;
+  color:var(--t1);font-family:'DM Mono',monospace;font-size:12px;
+  padding:9px 28px 9px 11px;cursor:pointer;outline:none;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238888aa' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;
+  transition:border-color .2s,background .2s}
+.cur-select:hover,.cur-select:focus{border-color:var(--b3);background-color:rgba(108,99,255,.08)}
+.cur-select option{background:var(--bg2)}
+.fx-badge{
+  margin-top:8px;font-family:'DM Mono',monospace;font-size:10px;color:var(--t2);
+  padding:5px 9px;background:rgba(62,207,142,.06);border-radius:7px;
+  border:1px solid rgba(62,207,142,.15);display:flex;align-items:center;gap:6px}
+.fx-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* Nav */
+nav{flex:1;padding:10px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(108,99,255,.2) transparent}
+nav::-webkit-scrollbar{width:3px}
+nav::-webkit-scrollbar-thumb{background:rgba(108,99,255,.25);border-radius:99px}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:12px;cursor:pointer;margin-bottom:2px;
+  font-size:13px;font-weight:600;color:var(--t2);
+  transition:all .2s var(--ease);border:1px solid transparent;
+  position:relative;user-select:none;min-height:44px}
+.nav-item:hover{color:var(--t1);background:rgba(255,255,255,.04);transform:translateX(2px)}
+.nav-item.active{color:var(--t1);background:rgba(108,99,255,.13);border-color:rgba(108,99,255,.25)}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:25%;bottom:25%;
+  width:3px;border-radius:0 3px 3px 0;
+  background:linear-gradient(180deg,#8f85ff,#38bdf8);
+  box-shadow:0 0 8px rgba(108,99,255,.6)}
+.nav-icon{
+  font-size:14px;width:22px;height:22px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  background:rgba(255,255,255,.04);border-radius:6px;transition:background .2s}
+.nav-item:hover .nav-icon,.nav-item.active .nav-icon{background:var(--accent-g)}
+.nav-badge{
+  margin-left:auto;font-size:9px;
+  background:linear-gradient(135deg,var(--accent-d),var(--accent));
+  color:#fff;padding:2px 7px;border-radius:99px;
+  font-family:'DM Mono',monospace;box-shadow:0 2px 8px rgba(108,99,255,.35)}
+.sidebar-footer{
+  padding:13px 15px;border-top:1px solid var(--b1);
+  font-size:10px;color:var(--t3);font-family:'DM Mono',monospace;
+  line-height:1.9;background:rgba(0,0,0,.15)}
+
+/* ── MAIN ───────────────────────────────────── */
+.main{margin-left:var(--sw);min-height:100vh;position:relative;z-index:1}
+.topbar{
+  padding:15px 28px;border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(7,7,15,.88);backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 1px 0 rgba(108,99,255,.08)}
+.page-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;letter-spacing:-.02em}
+.page-sub{font-size:11px;color:var(--t3);margin-top:2px;font-family:'DM Mono',monospace;letter-spacing:.04em}
+.hamburger{
+  display:none;background:rgba(255,255,255,.05);
+  border:1px solid var(--b1);border-radius:9px;
+  color:var(--t1);font-size:18px;cursor:pointer;
+  padding:7px 10px;line-height:1;min-height:44px;
+  transition:background .2s,border-color .2s}
+.hamburger:hover{background:var(--accent-g);border-color:var(--b2)}
+.content{padding:24px}
+
+/* ── GLASS CARD ─────────────────────────────── */
+.glass-card{
+  background:var(--glass);backdrop-filter:blur(var(--blur));
+  -webkit-backdrop-filter:blur(var(--blur));
+  border:1px solid var(--b1);border-radius:var(--r4);
+  padding:22px;position:relative;overflow:hidden;
+  transition:border-color .24s var(--ease),box-shadow .24s var(--ease),background .24s var(--ease)}
+.glass-card:hover{border-color:var(--b2);background:var(--glass-h);box-shadow:0 0 50px var(--accent-gl)}
+.glass-card::before{
+  content:'';position:absolute;top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(108,99,255,.38),transparent);pointer-events:none}
+
+/* ── PANELS ─────────────────────────────────── */
+.panel{display:none;animation:panelIn .35s var(--ease)}
+.panel.active{display:block}
+@keyframes panelIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SECTION HEADER ─────────────────────────── */
+.sec-head{margin-bottom:20px}
+.sec-head h2{
+  font-family:'Syne',sans-serif;font-size:clamp(20px,3vw,28px);
+  font-weight:800;letter-spacing:-.03em;
+  background:linear-gradient(135deg,var(--t1) 40%,var(--accent));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sec-head p{font-size:13px;color:var(--t2);margin-top:4px}
+
+/* ── GRID ───────────────────────────────────── */
+.grid-2{display:grid;grid-template-columns:1fr 1.08fr;gap:18px;align-items:start}
+.cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* ── CARD HEAD ──────────────────────────────── */
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.card-title{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Syne',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.07em;text-transform:uppercase;color:var(--t2)}
+.card-icon{
+  width:27px;height:27px;background:var(--accent-g);border:1px solid var(--b2);
+  border-radius:var(--r1);display:flex;align-items:center;justify-content:center;font-size:13px}
+
+/* ── FIELDS ─────────────────────────────────── */
+.field{margin-bottom:16px}
+.field-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.label-text{
+  font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--t3);display:flex;align-items:center;gap:5px}
+.label-live{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--gold)}
+
+/* Tooltip */
+.tt{
+  position:relative;width:14px;height:14px;border-radius:50%;
+  background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.25);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:9px;color:var(--accent);cursor:help}
+.tt-box{
+  position:absolute;bottom:calc(100% + 8px);left:50%;
+  transform:translateX(-50%) translateY(5px);
+  background:var(--bg3);border:1px solid var(--b2);border-radius:var(--r1);
+  padding:9px 12px;font-size:11px;color:var(--t2);line-height:1.55;
+  min-width:170px;max-width:200px;opacity:0;pointer-events:none;
+  transition:all .24s var(--ease);z-index:300;
+  text-transform:none;letter-spacing:0;font-weight:400;
+  backdrop-filter:blur(8px);white-space:normal}
+.tt-box::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:var(--b2)}
+.tt:hover .tt-box{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Input box */
+.ibox{
+  display:flex;align-items:center;background:var(--bg2);
+  border:1px solid var(--b1);border-radius:var(--r2);overflow:hidden;
+  transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
+.ibox:focus-within{border-color:var(--b3);box-shadow:0 0 0 3px var(--accent-g),0 0 20px var(--accent-g)}
+.ibox.error{border-color:rgba(247,106,106,.5)}
+.ibox.ok{border-color:rgba(62,207,142,.35)}
+.affix{
+  padding:0 12px;height:48px;font-family:'DM Mono',monospace;font-size:14px;color:var(--t3);
+  background:rgba(108,99,255,.05);display:flex;align-items:center;flex-shrink:0}
+.affix.l{border-right:1px solid var(--b1)}
+.affix.r{border-left:1px solid var(--b1)}
+input[type=number],input[type=text]{
+  flex:1;background:none;border:none;outline:none;
+  color:var(--t1);font-family:'DM Mono',monospace;
+  font-size:16px;padding:0 12px;height:48px;
+  -moz-appearance:textfield;width:100%}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+.err-msg{font-size:11px;color:var(--rose);font-family:'DM Mono',monospace;margin-top:4px;display:none}
+.err-msg.show{display:block}
+
+/* ── GLOWING SLIDERS ────────────────────────── */
+.slider-wrap{margin-top:9px}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:4px;
+  border-radius:99px;outline:none;cursor:pointer;background:var(--bg3)}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--accent);border:3px solid var(--bg1);
+  box-shadow:0 0 0 0 var(--accent-g);cursor:pointer;
+  transition:box-shadow .2s var(--ease),transform .14s var(--ease)}
+input[type=range]::-webkit-slider-thumb:hover{box-shadow:0 0 0 8px var(--accent-g);transform:scale(1.12)}
+input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 14px var(--accent-g);transform:scale(1.18)}
+input[type=range]::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;
+  background:var(--accent);border:3px solid var(--bg1);cursor:pointer}
+.slider-ends{
+  display:flex;justify-content:space-between;margin-top:4px;
+  font-family:'DM Mono',monospace;font-size:10px;color:var(--t3)}
+
+/* ── BUTTON ─────────────────────────────────── */
+.btn-calc{
+  width:100%;padding:14px;border:none;border-radius:var(--r2);
+  background:linear-gradient(135deg,var(--accent-d),var(--accent),#8f7fff);
+  color:#fff;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;
+  letter-spacing:.03em;cursor:pointer;position:relative;overflow:hidden;
+  margin-top:16px;transition:transform .14s var(--ease),box-shadow .2s var(--ease),filter .2s var(--ease);
+  box-shadow:0 4px 26px rgba(108,99,255,.34);min-height:48px}
+.btn-calc:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(108,99,255,.52);filter:brightness(1.08)}
+.btn-calc:active{transform:none}
+.btn-calc::after{
+  content:'';position:absolute;top:0;left:-110%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.17),transparent);
+  transition:left .5s var(--ease)}
+.btn-calc:hover::after{left:160%}
+
+/* ── LOADER ─────────────────────────────────── */
+.loader{
+  display:none;position:absolute;inset:0;
+  background:rgba(7,7,15,.78);backdrop-filter:blur(4px);border-radius:var(--r4);
+  z-index:60;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.loader.on{display:flex}
+.spinner{width:40px;height:40px;border:3px solid var(--b1);border-top-color:var(--accent);
+  border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner-txt{font-family:'DM Mono',monospace;font-size:11px;color:var(--t2)}
+
+/* ── RESULTS ────────────────────────────────── */
+.results{display:none;animation:fadeUp .38s var(--ease)}
+.results.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── STAT CARDS ─────────────────────────────── */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat{
+  background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r3);
+  padding:14px 12px;position:relative;overflow:hidden;
+  transition:transform .2s var(--ease),border-color .2s var(--ease)}
+.stat:hover{transform:translateY(-2px);border-color:var(--b2)}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:2px 2px 0 0}
+.stat.c-inv::before{background:#8888aa}
+.stat.c-ret::before{background:var(--green)}
+.stat.c-tot::before{background:linear-gradient(90deg,var(--accent),var(--cyan))}
+.stat.c-rose::before{background:var(--rose)}
+.stat.c-gold::before{background:var(--gold)}
+.stat.c-cyan::before{background:var(--cyan)}
+.stat-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--t3);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.sdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.stat-val{font-family:'DM Mono',monospace;font-size:clamp(13px,2vw,18px);
+  font-weight:500;color:var(--t1);letter-spacing:-.01em;word-break:break-all}
+.stat.c-ret .stat-val{color:var(--green)}
+.stat.c-tot .stat-val{color:var(--accent)}
+.stat.c-rose .stat-val{color:var(--rose)}
+.stat.c-gold .stat-val{color:var(--gold)}
+.stat.c-cyan .stat-val{color:var(--cyan)}
+.stat-badge{
+  margin-top:4px;display:inline-block;font-family:'DM Mono',monospace;font-size:10px;
+  padding:2px 7px;border-radius:99px}
+.badge-g{background:rgba(62,207,142,.11);color:var(--green);border:1px solid rgba(62,207,142,.2)}
+.badge-a{background:var(--accent-g);color:var(--accent);border:1px solid var(--b2)}
+
+/* ── DONUT CHART ────────────────────────────── */
+/* FIX from screenshot: chart was too big, legend was missing */
+.chart-zone{display:grid;grid-template-columns:160px 1fr;gap:16px;margin-bottom:16px;align-items:center}
+.donut-wrap{position:relative;width:160px;height:160px;flex-shrink:0}
+.donut-centre{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;pointer-events:none}
+.dc-label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+.dc-val{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--t1);margin-top:2px}
+.legend{display:flex;flex-direction:column;gap:12px;justify-content:center}
+.leg-item{display:flex;align-items:flex-start;gap:9px}
+.leg-sw{width:10px;height:10px;border-radius:3px;flex-shrink:0;margin-top:3px}
+.leg-name{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3)}
+.leg-val{font-family:'DM Mono',monospace;font-size:13px;color:var(--t1);margin-top:1px}
+.leg-pct{font-size:10px;color:var(--t2);margin-top:1px}
+
+/* ── TABLES ─────────────────────────────────── */
+.tbl-lbl{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.07em;text-transform:uppercase;color:var(--t2);
+  margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.tbl-scroll{overflow:auto;max-height:260px;border-radius:var(--r2);border:1px solid var(--b1);margin-bottom:16px}
+.tbl-scroll::-webkit-scrollbar{width:3px;height:3px}
+.tbl-scroll::-webkit-scrollbar-thumb{background:var(--b2);border-radius:99px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead{position:sticky;top:0;z-index:5}
+thead th{
+  background:var(--bg3);color:var(--t3);
+  font-family:'DM Mono',monospace;font-size:10px;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 11px;text-align:right;border-bottom:1px solid var(--b1);white-space:nowrap}
+thead th:first-child{text-align:center}
+tbody tr{border-bottom:1px solid rgba(108,99,255,.05);transition:background .14s var(--ease)}
+tbody tr:hover{background:rgba(108,99,255,.06)}
+tbody tr:last-child{border-bottom:none}
+tbody td{padding:7px 11px;font-family:'DM Mono',monospace;font-size:11px;
+  color:var(--t2);text-align:right;white-space:nowrap}
+tbody td:first-child{text-align:center;color:var(--t3);font-size:10px}
+td.g{color:var(--green)} td.a{color:var(--accent);font-weight:500} td.r{color:var(--rose)}
+
+/* ── EMPTY STATE ────────────────────────────── */
+.empty{text-align:center;padding:48px 20px;color:var(--t3)}
+.empty-ico{font-size:42px;margin-bottom:12px;opacity:.45}
+.empty-ttl{font-size:14px;font-weight:600;color:var(--t2);margin-bottom:4px}
+.empty-sub{font-size:11px;font-family:'DM Mono',monospace}
+
+/* ── COMPARE MODE ───────────────────────────── */
+.ctag{display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 9px;border-radius:99px}
+.ctag-a{background:rgba(108,99,255,.14);color:var(--accent);border:1px solid var(--b2)}
+.ctag-b{background:rgba(56,189,248,.14);color:var(--cyan);border:1px solid rgba(56,189,248,.3)}
+.cmp-result{
+  display:none;background:var(--bg2);border:1px solid var(--b1);
+  border-radius:var(--r3);overflow:hidden;margin-top:16px;animation:fadeUp .35s var(--ease)}
+.cmp-result.on{display:block}
+.cmp-hd{display:grid;grid-template-columns:1fr 1fr 1fr;
+  background:var(--bg3);border-bottom:1px solid var(--b1)}
+.cmp-hd div{padding:9px 13px;font-size:10px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--t3)}
+.cmp-hd div:nth-child(2),.cmp-hd div:nth-child(3){text-align:right}
+.cmp-row{display:grid;grid-template-columns:1fr 1fr 1fr;
+  border-bottom:1px solid rgba(108,99,255,.05);transition:background .14s var(--ease)}
+.cmp-row:last-child{border-bottom:none}
+.cmp-row:hover{background:rgba(108,99,255,.05)}
+.cmp-row div{padding:9px 13px;font-family:'DM Mono',monospace;font-size:12px;color:var(--t2)}
+.cmp-row div:first-child{font-size:10px;color:var(--t3)}
+.cmp-row div:nth-child(2){text-align:right;color:var(--accent)}
+.cmp-row div:nth-child(3){text-align:right;color:var(--cyan)}
+
+/* ── STEP-UP ────────────────────────────────── */
+.su-tag{font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:99px;margin-left:7px;
+  background:rgba(56,189,248,.11);color:var(--cyan);border:1px solid rgba(56,189,248,.24)}
+.su-bonus{
+  background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.2);
+  border-radius:var(--r2);padding:11px 14px;margin-bottom:14px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.su-bonus-lbl{font-size:11px;color:var(--t3);font-weight:700}
+.su-bonus-val{font-family:'DM Mono',monospace;font-size:14px;color:var(--cyan)}
+
+/* ── ACTION BUTTONS ─────────────────────────── */
+.action-row{display:flex;gap:7px;flex-wrap:wrap}
+.action-btn{
+  display:inline-flex;align-items:center;gap:6px;padding:8px 14px;
+  border-radius:var(--r2);border:1px solid var(--b2);background:var(--bg2);
+  color:var(--t2);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .2s var(--ease);min-height:36px}
+.action-btn:hover{color:var(--t1);border-color:var(--accent);background:var(--accent-g);
+  box-shadow:0 0 16px var(--accent-g)}
+
+/* ── TAB ROW ────────────────────────────────── */
+/* FIX from screenshot: tab row now scrollable, no overflow clipping */
+.tab-row{
+  display:flex;gap:2px;background:var(--bg2);border:1px solid var(--b1);
+  border-radius:99px;padding:4px;margin-bottom:18px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+  max-width:100%}
+.tab-row::-webkit-scrollbar{display:none}
+.tab-btn{
+  background:none;border:none;color:var(--t2);
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;
+  padding:8px 16px;border-radius:99px;cursor:pointer;
+  transition:all .2s var(--ease);white-space:nowrap;
+  display:flex;align-items:center;gap:5px;flex-shrink:0;min-height:36px}
+.tab-btn:hover{color:var(--t1)}
+.tab-btn.active{background:var(--accent);color:#fff;box-shadow:0 2px 16px rgba(108,99,255,.4)}
+
+/* ── AI CHAT ────────────────────────────────── */
+.chat-wrap{
+  background:var(--glass);backdrop-filter:blur(var(--blur));
+  -webkit-backdrop-filter:blur(var(--blur));border:1px solid var(--b1);
+  border-radius:var(--r4);overflow:hidden;display:flex;flex-direction:column;
+  height:calc(100vh - 170px);min-height:440px}
+.chat-msgs{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;
+  gap:13px;scroll-behavior:smooth}
+.chat-msgs::-webkit-scrollbar{width:3px}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--b2);border-radius:99px}
+.msg{max-width:84%;animation:fadeUp .25s var(--ease)}
+.msg.user{align-self:flex-end} .msg.ai{align-self:flex-start}
+.msg-name{font-size:10px;color:var(--t3);font-family:'DM Mono',monospace;margin-bottom:4px;padding:0 3px}
+.msg-bubble{padding:12px 16px;border-radius:16px;font-size:13px;line-height:1.65}
+.msg.user .msg-bubble{background:var(--accent);color:#fff;border-radius:16px 16px 4px 16px}
+.msg.ai .msg-bubble{background:var(--bg3);border:1px solid var(--b1);color:var(--t1);border-radius:16px 16px 16px 4px}
+.typing-dots{display:inline-flex;gap:4px;align-items:center;padding:3px 0}
+.typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--t2);animation:tdot .9s infinite}
+.typing-dots span:nth-child(2){animation-delay:.15s}
+.typing-dots span:nth-child(3){animation-delay:.3s}
+@keyframes tdot{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+.chat-input-row{padding:12px 16px;border-top:1px solid var(--b1);
+  display:flex;gap:9px;align-items:flex-end;background:var(--bg1)}
+.chat-input-row textarea{
+  flex:1;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r2);
+  padding:10px 13px;color:var(--t1);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;
+  outline:none;resize:none;min-height:44px;max-height:120px;line-height:1.5;
+  transition:border-color .2s var(--ease)}
+.chat-input-row textarea:focus{border-color:var(--accent)}
+.send-btn{
+  background:var(--accent);color:#fff;border:none;border-radius:var(--r2);
+  padding:10px 14px;cursor:pointer;font-size:17px;min-height:44px;flex-shrink:0;
+  transition:transform .14s,filter .14s}
+.send-btn:hover{transform:scale(1.08);filter:brightness(1.1)}
+.send-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.ai-notice{
+  background:rgba(244,201,93,.07);border:1px solid rgba(244,201,93,.2);
+  border-radius:var(--r2);padding:10px 14px;font-size:11px;color:var(--t2);
+  margin-bottom:13px;font-family:'DM Mono',monospace;line-height:1.7}
+
+/* ── OVERLAY ────────────────────────────────── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.62);
+  z-index:190;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.overlay.show{display:block}
+
+/* ── FOOTER ─────────────────────────────────── */
+.footer{text-align:center;padding:36px 16px 24px;font-size:10px;color:var(--t3);
+  font-family:'DM Mono',monospace;letter-spacing:.03em;line-height:1.9}
+
+/* ── UTILITY ────────────────────────────────── */
+.hidden{display:none!important}
+
+/* ════════════════════════════════════════════════════════
+   RESPONSIVE — MOBILE FIRST
+   Fixes all issues visible in the screenshot:
+   - Sidebar off-canvas on mobile
+   - Stats stacked properly
+   - Donut chart sized correctly
+   - Input tap targets enlarged
+════════════════════════════════════════════════════════ */
+@media(max-width:900px){
+  .grid-2{grid-template-columns:1fr;gap:14px}
+  .sec-head h2{font-size:22px}
+  .stats{grid-template-columns:repeat(3,1fr);gap:9px}
+  .tbl-scroll{max-height:220px}
+}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);width:264px;box-shadow:none}
+  .sidebar.open{transform:translateX(0);box-shadow:10px 0 48px rgba(0,0,0,.6)}
+  .main{margin-left:0}
+  .hamburger{display:inline-flex}
+  .topbar{padding:12px 16px}
+  .content{padding:16px 13px}
+  .glass-card{padding:18px 15px;border-radius:20px}
+  .sec-head{margin-bottom:16px}
+  .cmp-grid{grid-template-columns:1fr}
+  /* Chart: fixed size on mobile so it doesn't overflow */
+  .chart-zone{grid-template-columns:140px 1fr;gap:13px}
+  .donut-wrap{width:140px;height:140px}
+  .tbl-scroll{max-height:210px}
+  /* Tooltips: avoid right-edge overflow */
+  .tt-box{left:auto;right:0;transform:translateY(5px)}
+  .tt-box::after{left:auto;right:12px;transform:none}
+  .tt:hover .tt-box{transform:translateY(0)}
+  .chat-wrap{height:calc(100vh - 145px);min-height:360px}
+}
+@media(max-width:600px){
+  .content{padding:13px 11px}
+  .glass-card{padding:15px 12px;border-radius:17px}
+  .sec-head h2{font-size:19px}
+  /* FIX: chart stacks vertically on small phones */
+  .chart-zone{grid-template-columns:1fr;gap:14px}
+  .donut-wrap{width:150px;height:150px;margin:0 auto}
+  .legend{flex-direction:row;flex-wrap:wrap;gap:10px 18px;justify-content:center}
+  /* Stats: 2 up on medium phones */
+  .stats{grid-template-columns:repeat(2,1fr);gap:8px}
+  .stats .stat:last-child{grid-column:1/-1}
+  .stat{padding:12px 11px;border-radius:14px}
+  .stat-val{font-size:15px}
+  .action-btn{padding:7px 11px;font-size:11px}
+  .tab-btn{padding:7px 13px;font-size:11px}
+}
+@media(max-width:480px){
+  .content{padding:11px 9px}
+  .topbar{padding:10px 12px}
+  .glass-card{padding:13px 11px;border-radius:15px}
+  /* FIX: single column stats on small phones */
+  .stats{grid-template-columns:1fr}
+  .stats .stat:last-child{grid-column:auto}
+  /* Larger tap targets */
+  input[type=number],input[type=text]{height:52px}
+  .affix{height:52px;font-size:13px}
+  input[type=range]::-webkit-slider-thumb{width:26px;height:26px}
+  input[type=range]::-moz-range-thumb{width:26px;height:26px}
+  .btn-calc{padding:15px;font-size:14px;border-radius:13px}
+  .stat{padding:12px 11px}
+  .stat-val{font-size:16px}
+  .page-title{font-size:14px}
+  .page-sub{font-size:10px}
+  .logo-mark{font-size:18px}
+  .logo-wrap{padding:18px 14px 14px}
+  .cur-block{padding:10px 12px}
+  .nav-item{font-size:12px;padding:10px 10px}
+  .donut-wrap{width:140px;height:140px}
+  .dc-val{font-size:12px}
+  .chat-wrap{height:calc(100vh - 130px);min-height:320px}
+  .footer{padding:24px 12px 18px;font-size:10px}
+  .cmp-hd,.cmp-row{min-width:380px}
+  .cmp-result{overflow-x:auto}
+}
+@media(max-width:768px) and (orientation:landscape){
+  .content{padding:9px 13px}
+  .glass-card{padding:12px 14px}
+  .stats{grid-template-columns:repeat(3,1fr)}
+  .stats .stat:last-child{grid-column:auto}
+  .chart-zone{grid-template-columns:120px 1fr;gap:12px}
+  .donut-wrap{width:120px;height:120px}
+  .chat-wrap{height:calc(100vh - 110px)}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .orb{animation:none}
+  .btn-calc::after{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-mesh" aria-hidden="true">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- ═══ SIDEBAR ═══════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar" role="navigation">
+  <div class="logo-wrap">
+    <div class="logo-mark">FinSuite Pro</div>
+    <div class="logo-sub">Financial Toolkit v2.0</div>
+  </div>
+
+  <div class="cur-block">
+    <div class="cur-label">Display Currency</div>
+    <select class="cur-select" id="cur-sel" aria-label="Select currency" onchange="onCurChange()">
+      <option value="INR">₹ Indian Rupee (INR)</option>
+      <option value="USD">$ US Dollar (USD)</option>
+      <option value="EUR">€ Euro (EUR)</option>
+      <option value="GBP">£ British Pound (GBP)</option>
+      <option value="JPY">¥ Japanese Yen (JPY)</option>
+      <option value="AED">د.إ UAE Dirham (AED)</option>
+    </select>
+    <div class="fx-badge"><div class="fx-dot"></div><span id="fx-txt">1 INR = 1 INR</span></div>
+  </div>
+
+  <nav>
+    <div class="nav-item active" onclick="showPanel('sip',this)"><span class="nav-icon">📈</span>SIP Calculator</div>
+    <div class="nav-item" onclick="showPanel('emi',this)"><span class="nav-icon">🏠</span>EMI Calculator</div>
+    <div class="nav-item" onclick="showPanel('cagr',this)"><span class="nav-icon">📊</span>CAGR Calculator</div>
+    <div class="nav-item" onclick="showPanel('swp',this)"><span class="nav-icon">💸</span>SWP Calculator</div>
+    <div class="nav-item" onclick="showPanel('inflation',this)"><span class="nav-icon">🔥</span>Inflation Calc</div>
+    <div class="nav-item" onclick="showPanel('goal',this)"><span class="nav-icon">🎯</span>Goal Planner</div>
+    <div class="nav-item" onclick="showPanel('ai',this)"><span class="nav-icon">🤖</span>AI Assistant<span class="nav-badge">AI</span></div>
+  </nav>
+
+  <div class="sidebar-footer">
+    Estimates only · Not financial advice<br/>Consult a SEBI-registered advisor
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══════════════════════════════════════════════ -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="page-title" id="topTitle">SIP Calculator</div>
+      <div class="page-sub" id="topSub">Systematic Investment Plan</div>
+    </div>
+    <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  </div>
+
+  <div class="content">
+
+    <!-- ── SIP ─────────────────────────────────────────── -->
+    <div class="panel active" id="panel-sip">
+      <div class="sec-head"><h2>Build Your Wealth</h2><p>Calculate returns on monthly SIP investments with step-up &amp; comparison modes.</p></div>
+      <div class="tab-row">
+        <button class="tab-btn active" onclick="sipTab('single',this)">📈 Single SIP</button>
+        <button class="tab-btn" onclick="sipTab('compare',this)">⚖️ Compare</button>
+        <button class="tab-btn" onclick="sipTab('stepup',this)">🚀 Step-Up</button>
+      </div>
+
+      <!-- Single SIP -->
+      <div id="sip-single">
+        <div class="grid-2">
+          <div class="glass-card" style="position:relative">
+            <div class="loader" id="ld-sip"><div class="spinner"></div><div class="spinner-txt">Calculating…</div></div>
+            <div class="card-head"><div class="card-title"><div class="card-icon">📥</div>Parameters</div></div>
+            <div class="field">
+              <div class="field-label">
+                <span class="label-text">Monthly Investment<span class="tt">?<span class="tt-box">Fixed amount you invest every month. Even ₹500/month compounded over 15 years builds significant wealth.</span></span></span>
+                <span class="label-live" id="sip-m-lbl">₹5,000</span>
+              </div>
+              <div class="ibox" id="sip-m-box"><span class="affix l" id="sip-sym">₹</span>
+                <input type="number" id="sip-m" value="5000" min="100" max="10000000" step="500" aria-label="Monthly investment"
+                  oninput="SR('sip-m','sip-mr',100,200000);lbl('sip-m','sip-m-lbl','cur');val2('sip-m','sip-m-err',100,10000000)"/>
+              </div>
+              <div class="err-msg" id="sip-m-err">Enter a value between 100 and 1,00,00,000</div>
+              <div class="slider-wrap">
+                <input type="range" id="sip-mr" min="500" max="200000" step="500" value="5000"
+                  oninput="IS('sip-mr','sip-m');lbl('sip-m','sip-m-lbl','cur');fs(this)"/>
+                <div class="slider-ends"><span>₹500</span><span>₹2,00,000</span></div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="field-label">
+                <span class="label-text">Annual Return<span class="tt">?<span class="tt-box">Equity mutual funds historically return 12–15% p.a. in India. Debt funds: 6–8%. Use a realistic estimate.</span></span></span>
+                <span class="label-live" id="sip-r-lbl">12%</span>
+              </div>
+              <div class="ibox"><input type="number" id="sip-r" value="12" min="0.1" max="50" step="0.5" aria-label="Annual return rate"
+                oninput="SR('sip-r','sip-rr',0.1,50);lbl('sip-r','sip-r-lbl','pct')"/>
+                <span class="affix r">% p.a.</span>
+              </div>
+              <div class="slider-wrap">
+                <input type="range" id="sip-rr" min="1" max="30" step="0.5" value="12"
+                  oninput="IS('sip-rr','sip-r');lbl('sip-r','sip-r-lbl','pct');fs(this)"/>
+                <div class="slider-ends"><span>1%</span><span>30%</span></div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="field-label">
+                <span class="label-text">Duration<span class="tt">?<span class="tt-box">Every extra year dramatically boosts compounding. Starting 5 years earlier often doubles the final corpus.</span></span></span>
+                <span class="label-live" id="sip-y-lbl">10 Years</span>
+              </div>
+              <div class="ibox"><input type="number" id="sip-y" value="10" min="1" max="40" step="1" aria-label="Duration"
+                oninput="SR('sip-y','sip-yr',1,40);lbl('sip-y','sip-y-lbl','yr')"/>
+                <span class="affix r">Years</span>
+              </div>
+              <div class="slider-wrap">
+                <input type="range" id="sip-yr" min="1" max="40" step="1" value="10"
+                  oninput="IS('sip-yr','sip-y');lbl('sip-y','sip-y-lbl','yr');fs(this)"/>
+                <div class="slider-ends"><span>1</span><span>40 yrs</span></div>
+              </div>
+            </div>
+            <button class="btn-calc" onclick="calcSIP()">Calculate Returns →</button>
+          </div>
+
+          <div class="glass-card" style="position:relative">
+            <div class="card-head">
+              <div class="card-title"><div class="card-icon">📊</div>Wealth Projection</div>
+              <div class="action-row" id="sip-exp-row" style="display:none">
+                <button class="action-btn" onclick="exportPDF()">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                  Export PDF
+                </button>
+              </div>
+            </div>
+            <div class="empty" id="sip-empty"><div class="empty-ico">📈</div><div class="empty-ttl">Your projection will appear here</div><div class="empty-sub">Enter details and tap Calculate</div></div>
+            <div class="results" id="sip-res">
+              <div class="stats">
+                <div class="stat c-inv"><div class="stat-lbl"><div class="sdot" style="background:#8888aa"></div>Invested</div><div class="stat-val" id="sv-inv">—</div></div>
+                <div class="stat c-ret"><div class="stat-lbl"><div class="sdot" style="background:var(--green)"></div>Returns</div><div class="stat-val" id="sv-ret">—</div><div class="stat-badge badge-g" id="sv-gpct">+0%</div></div>
+                <div class="stat c-tot"><div class="stat-lbl"><div class="sdot" style="background:var(--accent)"></div>Corpus</div><div class="stat-val" id="sv-tot">—</div><div class="stat-badge badge-a" id="sv-mult">0x</div></div>
+              </div>
+              <div class="chart-zone">
+                <div class="donut-wrap">
+                  <canvas id="donut-sip" aria-label="Portfolio allocation"></canvas>
+                  <div class="donut-centre"><div class="dc-label">Total</div><div class="dc-val" id="sip-dc">—</div></div>
+                </div>
+                <div class="legend">
+                  <div class="leg-item"><div class="leg-sw" style="background:#8888aa"></div><div><div class="leg-name">Invested</div><div class="leg-val" id="leg-inv">—</div><div class="leg-pct" id="leg-invp">—</div></div></div>
+                  <div class="leg-item"><div class="leg-sw" style="background:var(--green)"></div><div><div class="leg-name">Returns</div><div class="leg-val" id="leg-ret">—</div><div class="leg-pct" id="leg-retp">—</div></div></div>
+                </div>
+              </div>
+              <div class="tbl-lbl">📅 Year-by-Year</div>
+              <div class="tbl-scroll"><table><thead><tr><th>Yr</th><th>Invested</th><th>Returns</th><th>Corpus</th><th>Growth</th></tr></thead><tbody id="sip-tbody"></tbody></table></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compare -->
+      <div id="sip-compare" class="hidden">
+        <div class="cmp-grid">
+          <div class="glass-card">
+            <div class="card-head"><div class="card-title"><div class="card-icon">📥</div>Plan A<span class="ctag ctag-a" style="margin-left:6px">A</span></div></div>
+            <div class="field"><div class="field-label"><span class="label-text">Monthly SIP</span><span class="label-live" id="ca-mlbl">—</span></div><div class="ibox"><span class="affix l" id="ca-sym">₹</span><input type="number" id="ca-m" value="5000" min="100" step="500" oninput="lbl('ca-m','ca-mlbl','cur')"/></div></div>
+            <div class="field"><div class="field-label"><span class="label-text">Annual Return</span><span class="label-live" id="ca-rlbl">12%</span></div><div class="ibox"><input type="number" id="ca-r" value="12" min="0.1" max="50" step="0.5" oninput="lbl('ca-r','ca-rlbl','pct')"/><span class="affix r">%</span></div></div>
+            <div class="field"><div class="field-label"><span class="label-text">Duration</span><span class="label-live" id="ca-ylbl">10 Years</span></div><div class="ibox"><input type="number" id="ca-y" value="10" min="1" max="40" oninput="lbl('ca-y','ca-ylbl','yr')"/><span class="affix r">Yrs</span></div></div>
+          </div>
+          <div class="glass-card">
+            <div class="card-head"><div class="card-title"><div class="card-icon">📥</div>Plan B<span class="ctag ctag-b" style="margin-left:6px">B</span></div></div>
+            <div class="field"><div class="field-label"><span class="label-text">Monthly SIP</span><span class="label-live" id="cb-mlbl">—</span></div><div class="ibox"><span class="affix l" id="cb-sym">₹</span><input type="number" id="cb-m" value="10000" min="100" step="500" oninput="lbl('cb-m','cb-mlbl','cur')"/></div></div>
+            <div class="field"><div class="field-label"><span class="label-text">Annual Return</span><span class="label-live" id="cb-rlbl">15%</span></div><div class="ibox"><input type="number" id="cb-r" value="15" min="0.1" max="50" step="0.5" oninput="lbl('cb-r','cb-rlbl','pct')"/><span class="affix r">%</span></div></div>
+            <div class="field"><div class="field-label"><span class="label-text">Duration</span><span class="label-live" id="cb-ylbl">10 Years</span></div><div class="ibox"><input type="number" id="cb-y" value="10" min="1" max="40" oninput="lbl('cb-y','cb-ylbl','yr')"/><span class="affix r">Yrs</span></div></div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:center;margin-top:16px"><button class="btn-calc" style="max-width:360px" onclick="calcCompare()">Compare Plans →</button></div>
+        <div class="cmp-result" id="cmp-res">
+          <div class="cmp-hd"><div>Metric</div><div>Plan A</div><div>Plan B</div></div>
+          <div class="cmp-row"><div>Monthly SIP</div><div id="cr-am">—</div><div id="cr-bm">—</div></div>
+          <div class="cmp-row"><div>Duration</div><div id="cr-ay">—</div><div id="cr-by">—</div></div>
+          <div class="cmp-row"><div>Return Rate</div><div id="cr-ar">—</div><div id="cr-br">—</div></div>
+          <div class="cmp-row"><div>Total Invested</div><div id="cr-ai">—</div><div id="cr-bi">—</div></div>
+          <div class="cmp-row"><div>Est. Returns</div><div id="cr-aret">—</div><div id="cr-bret">—</div></div>
+          <div class="cmp-row"><div>Total Corpus</div><div id="cr-at" style="font-weight:600">—</div><div id="cr-bt" style="font-weight:600">—</div></div>
+          <div class="cmp-row"><div>🏆 Winner</div><div id="cr-wa"></div><div id="cr-wb"></div></div>
+        </div>
+      </div>
+
+      <!-- Step-Up -->
+      <div id="sip-stepup" class="hidden">
+        <div class="grid-2">
+          <div class="glass-card" style="position:relative">
+            <div class="loader" id="ld-su"><div class="spinner"></div><div class="spinner-txt">Calculating…</div></div>
+            <div class="card-head"><div class="card-title"><div class="card-icon">🚀</div>Step-Up Inputs</div></div>
+            <div class="field"><div class="field-label"><span class="label-text">Starting SIP<span class="tt">?<span class="tt-box">Year-1 SIP. Increases by step-up % every year — like a salary raise applied to investments.</span></span></span><span class="label-live" id="su-mlbl">—</span></div><div class="ibox"><span class="affix l" id="su-sym">₹</span><input type="number" id="su-m" value="5000" min="100" step="500" oninput="SR('su-m','su-mr',500,100000);lbl('su-m','su-mlbl','cur')"/></div><div class="slider-wrap"><input type="range" id="su-mr" min="500" max="100000" step="500" value="5000" oninput="IS('su-mr','su-m');lbl('su-m','su-mlbl','cur');fs(this)"/><div class="slider-ends"><span>₹500</span><span>₹1L</span></div></div></div>
+            <div class="field"><div class="field-label"><span class="label-text">Step-Up Rate<span class="tt">?<span class="tt-box">10% step-up: ₹5,000→₹5,500→₹6,050 each year. Painless — matches salary hikes.</span></span></span><span class="label-live" id="su-slbl" style="color:var(--cyan)">10%</span></div><div class="ibox"><input type="number" id="su-s" value="10" min="0" max="50" step="1" oninput="SR('su-s','su-sr',0,50);lbl('su-s','su-slbl','pct')"/><span class="affix r">% / yr</span></div><div class="slider-wrap"><input type="range" id="su-sr" min="0" max="30" step="1" value="10" style="--accent:#38bdf8" oninput="IS('su-sr','su-s');lbl('su-s','su-slbl','pct');fs(this)"/><div class="slider-ends"><span>0%</span><span>30%</span></div></div></div>
+            <div class="field"><div class="field-label"><span class="label-text">Return Rate</span><span class="label-live" id="su-rlbl">12%</span></div><div class="ibox"><input type="number" id="su-r" value="12" min="0.1" max="50" step="0.5" oninput="SR('su-r','su-rr',1,30);lbl('su-r','su-rlbl','pct')"/><span class="affix r">% p.a.</span></div><div class="slider-wrap"><input type="range" id="su-rr" min="1" max="30" step="0.5" value="12" oninput="IS('su-rr','su-r');lbl('su-r','su-rlbl','pct');fs(this)"/><div class="slider-ends"><span>1%</span><span>30%</span></div></div></div>
+            <div class="field"><div class="field-label"><span class="label-text">Duration</span><span class="label-live" id="su-ylbl">15 Years</span></div><div class="ibox"><input type="number" id="su-y" value="15" min="1" max="40" step="1" oninput="SR('su-y','su-yr',1,40);lbl('su-y','su-ylbl','yr')"/><span class="affix r">Years</span></div><div class="slider-wrap"><input type="range" id="su-yr" min="1" max="40" step="1" value="15" oninput="IS('su-yr','su-y');lbl('su-y','su-ylbl','yr');fs(this)"/><div class="slider-ends"><span>1</span><span>40</span></div></div></div>
+            <button class="btn-calc" style="background:linear-gradient(135deg,#0e6fa3,#38bdf8,#7dd3fc);box-shadow:0 4px 26px rgba(56,189,248,.3)" onclick="calcStepUp()">Calculate Step-Up →</button>
+          </div>
+          <div class="glass-card">
+            <div class="card-head"><div class="card-title"><div class="card-icon">🚀</div>Step-Up Projection<span class="su-tag">+% / yr</span></div></div>
+            <div class="empty" id="su-empty"><div class="empty-ico">🚀</div><div class="empty-ttl">Step-Up projection appears here</div><div class="empty-sub">Enter parameters and calculate</div></div>
+            <div class="results" id="su-res">
+              <div class="stats">
+                <div class="stat c-inv"><div class="stat-lbl"><div class="sdot" style="background:#8888aa"></div>Invested</div><div class="stat-val" id="su-vinv">—</div></div>
+                <div class="stat c-ret"><div class="stat-lbl"><div class="sdot" style="background:var(--green)"></div>Returns</div><div class="stat-val" id="su-vret">—</div></div>
+                <div class="stat c-cyan"><div class="stat-lbl"><div class="sdot" style="background:var(--cyan)"></div>Corpus</div><div class="stat-val" id="su-vtot" style="color:var(--cyan)">—</div></div>
+              </div>
+              <div class="su-bonus"><div class="su-bonus-lbl">🆚 Extra vs flat SIP</div><div class="su-bonus-val" id="su-vs">—</div></div>
+              <div class="tbl-lbl">📅 Year-by-Year with Step-Up</div>
+              <div class="tbl-scroll"><table><thead><tr><th>Yr</th><th>Monthly SIP</th><th>Invested</th><th>Returns</th><th>Corpus</th></tr></thead><tbody id="su-tbody"></tbody></table></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /panel-sip -->
+
+    <!-- ── EMI ──────────────────────────────────────────── -->
+    <div class="panel" id="panel-emi">
+      <div class="sec-head"><h2>EMI Calculator</h2><p>Plan your loan repayments with a detailed amortisation breakdown.</p></div>
+      <div class="grid-2">
+        <div class="glass-card">
+          <div class="card-head"><div class="card-title"><div class="card-icon">🏦</div>Loan Details</div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Loan Amount<span class="tt">?<span class="tt-box">The principal borrowed. Home loans: ₹10L–₹5Cr. Car loans: ₹3L–₹20L. Personal loans: ₹50K–₹40L.</span></span></span><span class="label-live" id="emi-albl">—</span></div><div class="ibox"><span class="affix l" id="emi-sym">₹</span><input type="number" id="emi-a" value="1000000" min="1000" step="1000" oninput="SR('emi-a','emi-ar',10000,10000000);lbl('emi-a','emi-albl','cur');val2('emi-a','emi-aerr',1000,100000000)"/></div><div class="err-msg" id="emi-aerr">Enter a valid loan amount</div><div class="slider-wrap"><input type="range" id="emi-ar" min="10000" max="10000000" step="10000" value="1000000" oninput="IS('emi-ar','emi-a');lbl('emi-a','emi-albl','cur');fs(this)"/><div class="slider-ends"><span>₹10K</span><span>₹1Cr</span></div></div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Interest Rate<span class="tt">?<span class="tt-box">Home loans: 8–10%. Car: 9–12%. Personal: 12–24%. Check your bank's current rate.</span></span></span><span class="label-live" id="emi-rlbl">8.5%</span></div><div class="ibox"><input type="number" id="emi-r" value="8.5" min="0.1" max="36" step="0.1" oninput="SR('emi-r','emi-rr',0.1,20);lbl('emi-r','emi-rlbl','pct')"/><span class="affix r">%</span></div><div class="slider-wrap"><input type="range" id="emi-rr" min="1" max="20" step="0.1" value="8.5" oninput="IS('emi-rr','emi-r');lbl('emi-r','emi-rlbl','pct');fs(this)"/><div class="slider-ends"><span>1%</span><span>20%</span></div></div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Loan Tenure</span><span class="label-live" id="emi-ylbl">20 Years</span></div><div class="ibox"><input type="number" id="emi-y" value="20" min="1" max="30" step="1" oninput="SR('emi-y','emi-yr',1,30);lbl('emi-y','emi-ylbl','yr')"/><span class="affix r">Yrs</span></div><div class="slider-wrap"><input type="range" id="emi-yr" min="1" max="30" step="1" value="20" oninput="IS('emi-yr','emi-y');lbl('emi-y','emi-ylbl','yr');fs(this)"/><div class="slider-ends"><span>1</span><span>30</span></div></div></div>
+          <button class="btn-calc" onclick="calcEMI()">Calculate EMI →</button>
+        </div>
+        <div class="glass-card">
+          <div class="card-head"><div class="card-title"><div class="card-icon">📋</div>Loan Breakdown</div></div>
+          <div class="empty" id="emi-empty"><div class="empty-ico">🏠</div><div class="empty-ttl">EMI breakdown appears here</div><div class="empty-sub">Enter loan details and calculate</div></div>
+          <div class="results" id="emi-res">
+            <div class="stats">
+              <div class="stat c-rose"><div class="stat-lbl"><div class="sdot" style="background:var(--rose)"></div>Monthly EMI</div><div class="stat-val" id="emi-vemi">—</div></div>
+              <div class="stat c-inv"><div class="stat-lbl"><div class="sdot" style="background:#8888aa"></div>Principal</div><div class="stat-val" id="emi-vpri">—</div></div>
+              <div class="stat c-gold"><div class="stat-lbl"><div class="sdot" style="background:var(--rose)"></div>Interest</div><div class="stat-val" id="emi-vint">—</div></div>
+            </div>
+            <div class="chart-zone">
+              <div class="donut-wrap"><canvas id="donut-emi" aria-label="Principal vs Interest"></canvas><div class="donut-centre"><div class="dc-label">Total</div><div class="dc-val" id="emi-dc">—</div></div></div>
+              <div class="legend">
+                <div class="leg-item"><div class="leg-sw" style="background:#8888aa"></div><div><div class="leg-name">Principal</div><div class="leg-val" id="emi-lpri">—</div><div class="leg-pct" id="emi-lprip">—</div></div></div>
+                <div class="leg-item"><div class="leg-sw" style="background:var(--rose)"></div><div><div class="leg-name">Interest</div><div class="leg-val" id="emi-lint">—</div><div class="leg-pct" id="emi-lintp">—</div></div></div>
+              </div>
+            </div>
+            <div class="tbl-lbl">📅 Year-by-Year Amortisation</div>
+            <div class="tbl-scroll"><table><thead><tr><th>Yr</th><th>Principal</th><th>Interest</th><th>Total Paid</th><th>Balance</th></tr></thead><tbody id="emi-tbody"></tbody></table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CAGR ─────────────────────────────────────────── -->
+    <div class="panel" id="panel-cagr">
+      <div class="sec-head"><h2>CAGR Calculator</h2><p>Measure the compound annual growth rate of any investment.</p></div>
+      <div class="grid-2">
+        <div class="glass-card">
+          <div class="card-head"><div class="card-title"><div class="card-icon">🌱</div>Investment Values</div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Initial Value</span><span class="label-live" id="cagr-ilbl">—</span></div><div class="ibox"><span class="affix l" id="cagr-sym">₹</span><input type="number" id="cagr-i" value="100000" min="1" step="1000" oninput="lbl('cagr-i','cagr-ilbl','cur')"/></div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Final Value</span><span class="label-live" id="cagr-flbl">—</span></div><div class="ibox"><span class="affix l" id="cagr-sym2">₹</span><input type="number" id="cagr-f" value="250000" min="1" step="1000" oninput="lbl('cagr-f','cagr-flbl','cur')"/></div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Duration</span><span class="label-live" id="cagr-ylbl">5 Years</span></div><div class="ibox"><input type="number" id="cagr-y" value="5" min="1" max="50" step="1" oninput="SR('cagr-y','cagr-yr',1,30);lbl('cagr-y','cagr-ylbl','yr')"/><span class="affix r">Yrs</span></div><div class="slider-wrap"><input type="range" id="cagr-yr" min="1" max="30" step="1" value="5" oninput="IS('cagr-yr','cagr-y');lbl('cagr-y','cagr-ylbl','yr');fs(this)"/><div class="slider-ends"><span>1</span><span>30</span></div></div></div>
+          <button class="btn-calc" style="background:linear-gradient(135deg,#1a8c5a,var(--green),#6ee7b7);box-shadow:0 4px 26px rgba(62,207,142,.3)" onclick="calcCAGR()">Calculate CAGR →</button>
+        </div>
+        <div class="glass-card">
+          <div class="card-head"><div class="card-title"><div class="card-icon">📈</div>Growth Analysis</div></div>
+          <div class="empty" id="cagr-empty"><div class="empty-ico">📊</div><div class="empty-ttl">Growth analysis appears here</div><div class="empty-sub">Enter values and calculate</div></div>
+          <div class="results" id="cagr-res">
+            <div class="stats">
+              <div class="stat c-ret"><div class="stat-lbl"><div class="sdot" style="background:var(--green)"></div>CAGR Rate</div><div class="stat-val" id="cagr-vrate">—</div></div>
+              <div class="stat c-inv"><div class="stat-lbl"><div class="sdot" style="background:#8888aa"></div>Absolute Return</div><div class="stat-val" id="cagr-vabs">—</div></div>
+              <div class="stat c-gold"><div class="stat-lbl"><div class="sdot" style="background:var(--gold)"></div>Multiple</div><div class="stat-val" id="cagr-vmul">—</div></div>
+            </div>
+            <div class="tbl-lbl">💡 Benchmark Comparison</div>
+            <div class="tbl-scroll"><table><thead><tr><th>Benchmark</th><th>Typical CAGR</th><th>Verdict</th></tr></thead><tbody id="cagr-tbody"></tbody></table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SWP ──────────────────────────────────────────── -->
+    <div class="panel" id="panel-swp">
+      <div class="sec-head"><h2>SWP Calculator</h2><p>Systematic Withdrawal Plan — model your retirement income stream.</p></div>
+      <div class="grid-2">
+        <div class="glass-card">
+          <div class="card-head"><div class="card-title"><div class="card-icon">💰</div>Portfolio Details</div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Initial Corpus<span class="tt">?<span class="tt-box">Your total corpus at start of retirement. Grows via returns while you withdraw monthly.</span></span></span><span class="label-live" id="swp-clbl">—</span></div><div class="ibox"><span class="affix l" id="swp-sym">₹</span><input type="number" id="swp-c" value="5000000" min="10000" step="10000" oninput="SR('swp-c','swp-cr',100000,20000000);lbl('swp-c','swp-clbl','cur')"/></div><div class="slider-wrap"><input type="range" id="swp-cr" min="100000" max="20000000" step="100000" value="5000000" oninput="IS('swp-cr','swp-c');lbl('swp-c','swp-clbl','cur');fs(this)"/><div class="slider-ends"><span>₹1L</span><span>₹2Cr</span></div></div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Monthly Withdrawal<span class="tt">?<span class="tt-box">If this exceeds monthly returns earned, corpus depletes. If less, corpus may last forever.</span></span></span><span class="label-live" id="swp-wlbl">—</span></div><div class="ibox"><span class="affix l" id="swp-wsym">₹</span><input type="number" id="swp-w" value="30000" min="1000" step="1000" oninput="SR('swp-w','swp-wr',1000,500000);lbl('swp-w','swp-wlbl','cur')"/></div><div class="slider-wrap"><input type="range" id="swp-wr" min="1000" max="300000" step="1000" value="30000" oninput="IS('swp-wr','swp-w');lbl('swp-w','swp-wlbl','cur');fs(this)"/><div class="slider-ends"><span>₹1K</span><span>₹3L</span></div></div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Return Rate</span><span class="label-live" id="swp-rlbl">10%</span></div><div class="ibox"><input type="number" id="swp-r" value="10" min="0.1" max="30" step="0.5" oninput="SR('swp-r','swp-rr',1,20);lbl('swp-r','swp-rlbl','pct')"/><span class="affix r">%</span></div><div class="slider-wrap"><input type="range" id="swp-rr" min="1" max="20" step="0.5" value="10" oninput="IS('swp-rr','swp-r');lbl('swp-r','swp-rlbl','pct');fs(this)"/><div class="slider-ends"><span>1%</span><span>20%</span></div></div></div>
+          <button class="btn-calc" style="background:linear-gradient(135deg,#b07d10,var(--gold),#fde68a);color:#1a1000;box-shadow:0 4px 26px rgba(244,201,93,.3)" onclick="calcSWP()">Calculate SWP →</button>
+        </div>
+        <div class="glass-card">
+          <div class="card-head"><div class="card-title"><div class="card-icon">📋</div>Withdrawal Analysis</div></div>
+          <div class="empty" id="swp-empty"><div class="empty-ico">💸</div><div class="empty-ttl">Withdrawal analysis appears here</div><div class="empty-sub">Enter details and calculate</div></div>
+          <div class="results" id="swp-res">
+            <div class="stats">
+              <div class="stat c-gold"><div class="stat-lbl"><div class="sdot" style="background:var(--gold)"></div>Corpus Lasts</div><div class="stat-val" id="swp-vdur">—</div></div>
+              <div class="stat c-inv"><div class="stat-lbl"><div class="sdot" style="background:#8888aa"></div>Total Withdrawn</div><div class="stat-val" id="swp-vtot">—</div></div>
+              <div class="stat c-ret"><div class="stat-lbl"><div class="sdot" style="background:var(--green)"></div>Gains Earned</div><div class="stat-val" id="swp-vgain">—</div></div>
+            </div>
+            <div id="swp-tip" style="background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r2);padding:13px 15px;font-size:13px;color:var(--t2);line-height:1.7"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── INFLATION ─────────────────────────────────────── -->
+    <div class="panel" id="panel-inflation">
+      <div class="sec-head"><h2>Inflation Calculator</h2><p>See how rising prices erode your purchasing power over time.</p></div>
+      <div class="grid-2">
+        <div class="glass-card">
+          <div class="card-head"><div class="card-title"><div class="card-icon">🔥</div>Parameters</div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Current Amount</span><span class="label-live" id="inf-albl">—</span></div><div class="ibox"><span class="affix l" id="inf-sym">₹</span><input type="number" id="inf-a" value="1000000" min="1" step="1000" oninput="lbl('inf-a','inf-albl','cur')"/></div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Inflation Rate<span class="tt">?<span class="tt-box">India's average CPI inflation: 5–7%. RBI targets 4% ±2%. Use 6% as conservative estimate.</span></span></span><span class="label-live" id="inf-rlbl">6%</span></div><div class="ibox"><input type="number" id="inf-r" value="6" min="0.1" max="30" step="0.1" oninput="SR('inf-r','inf-rr',0.1,20);lbl('inf-r','inf-rlbl','pct')"/><span class="affix r">%</span></div><div class="slider-wrap"><input type="range" id="inf-rr" min="1" max="20" step="0.1" value="6" oninput="IS('inf-rr','inf-r');lbl('inf-r','inf-rlbl','pct');fs(this)"/><div class="slider-ends"><span>1%</span><span>20%</span></div></div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Time Period</span><span class="label-live" id="inf-ylbl">10 Years</span></div><div class="ibox"><input type="number" id="inf-y" value="10" min="1" max="50" step="1" oninput="SR('inf-y','inf-yr',1,40);lbl('inf-y','inf-ylbl','yr')"/><span class="affix r">Yrs</span></div><div class="slider-wrap"><input type="range" id="inf-yr" min="1" max="40" step="1" value="10" oninput="IS('inf-yr','inf-y');lbl('inf-y','inf-ylbl','yr');fs(this)"/><div class="slider-ends"><span>1</span><span>40</span></div></div></div>
+          <button class="btn-calc" style="background:linear-gradient(135deg,#c0392b,var(--rose),#fca5a5);box-shadow:0 4px 26px rgba(247,106,106,.3)" onclick="calcInflation()">Calculate Impact →</button>
+        </div>
+        <div class="glass-card">
+          <div class="card-head"><div class="card-title"><div class="card-icon">📉</div>Purchasing Power Impact</div></div>
+          <div class="empty" id="inf-empty"><div class="empty-ico">🔥</div><div class="empty-ttl">Inflation impact appears here</div><div class="empty-sub">Enter details and calculate</div></div>
+          <div class="results" id="inf-res">
+            <div class="stats">
+              <div class="stat c-rose"><div class="stat-lbl"><div class="sdot" style="background:var(--rose)"></div>Future Cost</div><div class="stat-val" id="inf-vfut">—</div></div>
+              <div class="stat c-inv"><div class="stat-lbl"><div class="sdot" style="background:#8888aa"></div>Today's Value</div><div class="stat-val" id="inf-vnow">—</div></div>
+              <div class="stat c-rose"><div class="stat-lbl"><div class="sdot" style="background:var(--rose)"></div>Value Eroded</div><div class="stat-val" id="inf-vlost">—</div></div>
+            </div>
+            <div class="chart-zone">
+              <div class="donut-wrap"><canvas id="donut-inf" aria-label="Purchasing power"></canvas><div class="donut-centre"><div class="dc-label">Power</div><div class="dc-val" id="inf-dc">—</div></div></div>
+              <div class="legend">
+                <div class="leg-item"><div class="leg-sw" style="background:var(--green)"></div><div><div class="leg-name">Remaining</div><div class="leg-val" id="inf-lrem">—</div><div class="leg-pct" id="inf-lremp">—</div></div></div>
+                <div class="leg-item"><div class="leg-sw" style="background:var(--rose)"></div><div><div class="leg-name">Eroded</div><div class="leg-val" id="inf-lero">—</div><div class="leg-pct" id="inf-lerop">—</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── GOAL ─────────────────────────────────────────── -->
+    <div class="panel" id="panel-goal">
+      <div class="sec-head"><h2>Goal Planner</h2><p>Work backwards from your dream to find the monthly SIP you need today.</p></div>
+      <div class="grid-2">
+        <div class="glass-card">
+          <div class="card-head"><div class="card-title"><div class="card-icon">🎯</div>Your Goal</div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Goal Name</span></div><div class="ibox"><input type="text" id="goal-name" value="Dream Home" placeholder="e.g. Dream Home, Car, Education"/></div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Target Amount</span><span class="label-live" id="goal-tlbl">—</span></div><div class="ibox"><span class="affix l" id="goal-sym">₹</span><input type="number" id="goal-t" value="5000000" min="1000" step="10000" oninput="SR('goal-t','goal-tr',100000,50000000);lbl('goal-t','goal-tlbl','cur')"/></div><div class="slider-wrap"><input type="range" id="goal-tr" min="100000" max="50000000" step="100000" value="5000000" oninput="IS('goal-tr','goal-t');lbl('goal-t','goal-tlbl','cur');fs(this)"/><div class="slider-ends"><span>₹1L</span><span>₹5Cr</span></div></div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Time to Goal</span><span class="label-live" id="goal-ylbl">10 Years</span></div><div class="ibox"><input type="number" id="goal-y" value="10" min="1" max="40" step="1" oninput="SR('goal-y','goal-yr',1,40);lbl('goal-y','goal-ylbl','yr')"/><span class="affix r">Yrs</span></div><div class="slider-wrap"><input type="range" id="goal-yr" min="1" max="40" step="1" value="10" oninput="IS('goal-yr','goal-y');lbl('goal-y','goal-ylbl','yr');fs(this)"/><div class="slider-ends"><span>1</span><span>40</span></div></div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Expected Return</span><span class="label-live" id="goal-rlbl">12%</span></div><div class="ibox"><input type="number" id="goal-r" value="12" min="0.1" max="50" step="0.5" oninput="SR('goal-r','goal-rr',1,25);lbl('goal-r','goal-rlbl','pct')"/><span class="affix r">%</span></div><div class="slider-wrap"><input type="range" id="goal-rr" min="1" max="25" step="0.5" value="12" oninput="IS('goal-rr','goal-r');lbl('goal-r','goal-rlbl','pct');fs(this)"/><div class="slider-ends"><span>1%</span><span>25%</span></div></div></div>
+          <div class="field"><div class="field-label"><span class="label-text">Already Saved</span><span class="label-live" id="goal-slbl">₹0</span></div><div class="ibox"><span class="affix l" id="goal-ssym">₹</span><input type="number" id="goal-s" value="0" min="0" step="1000" oninput="lbl('goal-s','goal-slbl','cur')"/></div></div>
+          <button class="btn-calc" style="background:linear-gradient(135deg,#b07d10,var(--gold),#fde68a);color:#1a1000;box-shadow:0 4px 26px rgba(244,201,93,.3)" onclick="calcGoal()">Plan My Goal →</button>
+        </div>
+        <div class="glass-card">
+          <div class="card-head"><div class="card-title"><div class="card-icon">🗺️</div>Goal Roadmap</div></div>
+          <div class="empty" id="goal-empty"><div class="empty-ico">🎯</div><div class="empty-ttl">Your roadmap appears here</div><div class="empty-sub">Enter goal details and calculate</div></div>
+          <div class="results" id="goal-res">
+            <div class="stats">
+              <div class="stat c-gold"><div class="stat-lbl"><div class="sdot" style="background:var(--gold)"></div>Monthly SIP Needed</div><div class="stat-val" id="goal-vsip">—</div></div>
+              <div class="stat c-inv"><div class="stat-lbl"><div class="sdot" style="background:#8888aa"></div>Total to Invest</div><div class="stat-val" id="goal-vinv">—</div></div>
+              <div class="stat c-ret"><div class="stat-lbl"><div class="sdot" style="background:var(--green)"></div>Returns Expected</div><div class="stat-val" id="goal-vret">—</div></div>
+            </div>
+            <div id="goal-tip" style="background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r2);padding:13px 15px;font-size:13px;color:var(--t2);line-height:1.7"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── AI ASSISTANT ──────────────────────────────────── -->
+    <div class="panel" id="panel-ai">
+      <div class="sec-head"><h2>AI Finance Assistant</h2><p>Ask anything about investing, budgeting, mutual funds, or tax planning.</p></div>
+      <div class="ai-notice">⚠️ AI responses are educational only — not personalised financial advice. Consult a SEBI-registered advisor for investment decisions.</div>
+      <div class="chat-wrap">
+        <div class="chat-msgs" id="chat-msgs">
+          <div class="msg ai">
+            <div class="msg-name">FinSuite AI</div>
+            <div class="msg-bubble">👋 Hello! I can help you understand SIPs, EMIs, CAGR, tax-saving instruments (ELSS, PPF, NPS), mutual fund categories, and budgeting strategies.<br/><br/>Try: <em>"What is the 50-30-20 rule?"</em> or <em>"Compare ELSS vs PPF"</em></div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <textarea id="chat-inp" placeholder="Ask about investing, SIP, mutual funds, tax planning…" rows="1"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"
+            oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+          <button class="send-btn" id="send-btn" onclick="sendMsg()" aria-label="Send">↑</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      Results are illustrative estimates only · Past returns do not guarantee future performance<br/>
+      Consult a SEBI-registered investment advisor for personalised financial advice<br/>
+      <span style="color:rgba(108,99,255,.35)">FinSuite Pro v2.0 · Built for Zerodha Varsity learners</span>
+    </footer>
+  </div>
+</div>
+
+<script>
+/* ── CURRENCY ───────────────────────────────────────────── */
+const CUR = {
+  INR:{sym:'₹',rate:1,      loc:'en-IN', dec:0},
+  USD:{sym:'$',rate:0.012,  loc:'en-US', dec:2},
+  EUR:{sym:'€',rate:0.011,  loc:'de-DE', dec:2},
+  GBP:{sym:'£',rate:0.0094, loc:'en-GB', dec:2},
+  JPY:{sym:'¥',rate:1.82,   loc:'ja-JP', dec:0},
+  AED:{sym:'د.إ',rate:0.044,loc:'ar-AE', dec:2},
+};
+let CX = localStorage.getItem('fs_cur')||'INR';
+
+function toD(n){ return n*CUR[CX].rate; }
+
+function fmt(n,compact=false){
+  const c=CUR[CX], v=toD(n), s=c.sym;
+  if(compact){
+    if(CX==='INR'){
+      if(v>=1e7) return s+(v/1e7).toFixed(2)+' Cr';
+      if(v>=1e5) return s+(v/1e5).toFixed(2)+' L';
+    } else if(CX==='JPY'){
+      if(v>=1e8) return s+(v/1e8).toFixed(2)+'億';
+      if(v>=1e4) return s+(v/1e4).toFixed(1)+'万';
+    } else {
+      if(v>=1e9) return s+(v/1e9).toFixed(2)+'B';
+      if(v>=1e6) return s+(v/1e6).toFixed(2)+'M';
+      if(v>=1e3) return s+(v/1e3).toFixed(1)+'K';
+    }
+  }
+  if(CX==='INR') return s+Math.round(v).toLocaleString('en-IN');
+  if(CX==='JPY') return s+Math.round(v).toLocaleString('ja-JP');
+  return s+v.toLocaleString(c.loc,{minimumFractionDigits:c.dec,maximumFractionDigits:c.dec});
+}
+const fmtC=n=>fmt(n,true);
+const fmtP=n=>n.toFixed(2)+'%';
+
+function onCurChange(){
+  CX=G('cur-sel').value;
+  localStorage.setItem('fs_cur',CX);
+  _syms(); _fxbadge(); _relbl();
+}
+function _syms(){
+  const s=CUR[CX].sym;
+  document.querySelectorAll('[id$="-sym"],[id$="-sym2"],[id$="-ssym"],[id$="-wsym"]').forEach(e=>e.textContent=s);
+}
+function _fxbadge(){
+  const el=G('fx-txt'); if(!el) return;
+  const {rate}=CUR[CX];
+  el.textContent=CX==='INR'?'1 INR = 1 INR':`1 INR = ${rate.toFixed(CX==='JPY'?4:6)} ${CX}`;
+}
+const LBL_MAP=[
+  ['sip-m','sip-m-lbl','cur'],['sip-r','sip-r-lbl','pct'],['sip-y','sip-y-lbl','yr'],
+  ['ca-m','ca-mlbl','cur'],['ca-r','ca-rlbl','pct'],['ca-y','ca-ylbl','yr'],
+  ['cb-m','cb-mlbl','cur'],['cb-r','cb-rlbl','pct'],['cb-y','cb-ylbl','yr'],
+  ['su-m','su-mlbl','cur'],['su-s','su-slbl','pct'],['su-r','su-rlbl','pct'],['su-y','su-ylbl','yr'],
+  ['emi-a','emi-albl','cur'],['emi-r','emi-rlbl','pct'],['emi-y','emi-ylbl','yr'],
+  ['cagr-i','cagr-ilbl','cur'],['cagr-f','cagr-flbl','cur'],['cagr-y','cagr-ylbl','yr'],
+  ['swp-c','swp-clbl','cur'],['swp-w','swp-wlbl','cur'],['swp-r','swp-rlbl','pct'],
+  ['inf-a','inf-albl','cur'],['inf-r','inf-rlbl','pct'],['inf-y','inf-ylbl','yr'],
+  ['goal-t','goal-tlbl','cur'],['goal-s','goal-slbl','cur'],['goal-y','goal-ylbl','yr'],['goal-r','goal-rlbl','pct'],
+];
+function _relbl(){ LBL_MAP.forEach(([i,l,t])=>lbl(i,l,t)); }
+
+/* ── DOM HELPERS ────────────────────────────────────────── */
+const G=id=>document.getElementById(id);
+const V=id=>parseFloat(G(id)?.value)||0;
+const SET=(id,t)=>{const e=G(id);if(e)e.textContent=t;};
+
+function lbl(inputId,labelId,type){
+  const v=V(inputId), el=G(labelId); if(!el) return;
+  el.textContent=type==='cur'?fmt(v):type==='pct'?v+'%':v+(v===1?' Year':' Years');
+}
+
+/* ── SLIDER SYNC ────────────────────────────────────────── */
+function SR(inId,slId,min,max){
+  const v=Math.min(Math.max(V(inId),min),max);
+  const sl=G(slId); if(sl){sl.value=v;fs(sl);}
+}
+function IS(slId,inId){ const e=G(inId);if(e)e.value=G(slId).value; }
+function fs(sl){
+  if(!sl) return;
+  const pct=((+sl.value-+sl.min)/(+sl.max-+sl.min))*100;
+  const acc=sl.style.getPropertyValue('--accent')||'#6c63ff';
+  sl.style.background=`linear-gradient(90deg,${acc} ${pct}%,#161630 ${pct}%)`;
+}
+
+/* ── VALIDATION ─────────────────────────────────────────── */
+function val2(inId,errId,min,max){
+  const el=G(inId),err=G(errId),box=el?.closest('.ibox');
+  const v=V(inId), ok=v>=min&&v<=max&&!isNaN(v);
+  box?.classList.toggle('error',!ok); box?.classList.toggle('ok',ok);
+  err?.classList.toggle('show',!ok); return ok;
+}
+
+/* ── NAV ────────────────────────────────────────────────── */
+const PAGE={
+  sip:['SIP Calculator','Systematic Investment Plan'],
+  emi:['EMI Calculator','Loan Repayment Planner'],
+  cagr:['CAGR Calculator','Compound Annual Growth Rate'],
+  swp:['SWP Calculator','Systematic Withdrawal Plan'],
+  inflation:['Inflation Calculator','Purchasing Power Erosion'],
+  goal:['Goal Planner','Monthly Investment Roadmap'],
+  ai:['AI Assistant','Powered by Claude AI'],
+};
+function showPanel(id,nav){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  G('panel-'+id)?.classList.add('active');
+  nav.classList.add('active');
+  const[t,s]=PAGE[id]||[id,id];
+  SET('topTitle',t); SET('topSub',s);
+  localStorage.setItem('fs_panel',id);
+  if(window.innerWidth<769) closeSidebar();
+}
+function toggleSidebar(){ G('sidebar').classList.toggle('open'); G('overlay').classList.toggle('show'); }
+function closeSidebar(){ G('sidebar').classList.remove('open'); G('overlay').classList.remove('show'); }
+
+/* ── SIP TABS ───────────────────────────────────────────── */
+function sipTab(mode,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['single','compare','stepup'].forEach(m=>G('sip-'+m)?.classList.toggle('hidden',m!==mode));
+}
+
+/* ── CHART MANAGER ──────────────────────────────────────── */
+const CHARTS={};
+function donut(canvasId,d1,d2,c1,c2){
+  const cv=G(canvasId); if(!cv) return;
+  if(CHARTS[canvasId]){ CHARTS[canvasId].destroy(); }
+  const total=d1+d2;
+  CHARTS[canvasId]=new Chart(cv.getContext('2d'),{
+    type:'doughnut',
+    data:{labels:['A','B'],datasets:[{
+      data:[d1,d2],
+      backgroundColor:[c1+'cc',c2+'cc'],
+      borderColor:[c1+'33',c2+'33'],
+      borderWidth:2,
+      hoverBackgroundColor:[c1,c2],
+      hoverBorderWidth:0,
+    }]},
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'72%',
+      animation:{animateRotate:true,duration:880,easing:'easeInOutQuart'},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{label:c=>' '+fmt(c.raw)+' ('+((c.raw/total)*100).toFixed(1)+'%)'},
+          backgroundColor:'rgba(11,11,26,.96)',borderColor:'rgba(108,99,255,.3)',borderWidth:1,
+          titleFont:{family:'DM Mono',size:10},bodyFont:{family:'DM Mono',size:12},padding:10,cornerRadius:8,
+        }
+      }
+    }
+  });
+}
+
+/* ── SHOW RESULTS ───────────────────────────────────────── */
+function showRes(emptyId,resId,expId=null){
+  const em=G(emptyId); if(em) em.style.display='none';
+  if(expId){const er=G(expId);if(er)er.style.display='flex';}
+  const res=G(resId); if(!res) return;
+  res.classList.remove('on'); void res.offsetWidth; res.classList.add('on');
+}
+
+/* ── TABLE BUILDER ──────────────────────────────────────── */
+function buildTable(tbodyId,rows){
+  const tb=G(tbodyId); if(!tb) return; tb.innerHTML='';
+  rows.forEach(cells=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=cells.map(c=>`<td class="${c.cls||''}">${c.v}</td>`).join('');
+    tb.appendChild(tr);
+  });
+}
+
+/* ── MATH ───────────────────────────────────────────────── */
+function sipFV(P,ar,y){ const r=ar/100/12,n=y*12; if(r===0) return P*n; return P*((Math.pow(1+r,n)-1)/r)*(1+r); }
+function emiAmt(P,ar,y){ const r=ar/100/12,n=y*12; if(r===0) return P/n; return P*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1); }
+
+/* ── CALCULATORS ────────────────────────────────────────── */
+function calcSIP(){
+  const P=V('sip-m'),r=V('sip-r'),y=V('sip-y');
+  if(!P||!r||!y) return;
+  if(!val2('sip-m','sip-m-err',100,1e7)) return;
+  const ld=G('ld-sip'); ld?.classList.add('on');
+  setTimeout(()=>{
+    const tot=sipFV(P,r,y), inv=P*y*12, ret=tot-inv;
+    const iP=(inv/tot*100).toFixed(1), rP=(ret/tot*100).toFixed(1);
+    SET('sv-inv',fmt(inv)); SET('sv-ret',fmt(ret)); SET('sv-tot',fmt(tot));
+    SET('sv-gpct','+'+(ret/inv*100).toFixed(1)+'% gains');
+    SET('sv-mult',(tot/inv).toFixed(2)+'x');
+    donut('donut-sip',inv,ret,'#8888aa','#3ecf8e');
+    SET('sip-dc',fmtC(tot));
+    SET('leg-inv',fmt(inv)); SET('leg-invp',iP+'% of total');
+    SET('leg-ret',fmt(ret)); SET('leg-retp',rP+'% of total');
+    const mr=r/100/12; let prev=0;
+    buildTable('sip-tbody',Array.from({length:y},(_,i)=>{
+      const yr=i+1,n=yr*12,c=P*((Math.pow(1+mr,n)-1)/mr)*(1+mr),iv=P*n;
+      const g=prev>0?((c-prev)/prev*100).toFixed(1)+'%':'—'; prev=c;
+      return [{v:'Y'+yr},{v:fmt(iv)},{v:fmt(c-iv),cls:'g'},{v:fmt(c),cls:'a'},{v:g}];
+    }));
+    localStorage.setItem('fs_sip_last',JSON.stringify({P,r,y,tot,inv,ret}));
+    showRes('sip-empty','sip-res','sip-exp-row');
+    ld?.classList.remove('on');
+  },280);
+}
+
+function calcCompare(){
+  const aM=V('ca-m'),aR=V('ca-r'),aY=V('ca-y');
+  const bM=V('cb-m'),bR=V('cb-r'),bY=V('cb-y');
+  if(!aM||!aR||!aY||!bM||!bR||!bY) return;
+  const aT=sipFV(aM,aR,aY),aI=aM*aY*12,aRet=aT-aI;
+  const bT=sipFV(bM,bR,bY),bI=bM*bY*12,bRet=bT-bI;
+  const map={'cr-am':fmt(aM)+'/mo','cr-bm':fmt(bM)+'/mo',
+    'cr-ay':aY+' yrs','cr-by':bY+' yrs','cr-ar':aR+'%','cr-br':bR+'%',
+    'cr-ai':fmt(aI),'cr-bi':fmt(bI),'cr-aret':fmt(aRet),'cr-bret':fmt(bRet),
+    'cr-at':fmt(aT),'cr-bt':fmt(bT)};
+  Object.entries(map).forEach(([id,t])=>SET(id,t));
+  SET('cr-wa',aT>bT?'🏆 Higher':aT===bT?'🤝 Tie':'');
+  SET('cr-wb',bT>aT?'🏆 Higher':aT===bT?'🤝 Tie':'');
+  const res=G('cmp-res'); res?.classList.remove('on'); void res?.offsetWidth; res?.classList.add('on');
+}
+
+function calcStepUp(){
+  const sM=V('su-m'),sp=V('su-s'),r=V('su-r'),y=V('su-y');
+  if(!sM||!r||!y) return;
+  const ld=G('ld-su'); ld?.classList.add('on');
+  setTimeout(()=>{
+    const mr=r/100/12; let corpus=0,inv=0,cur=sM;
+    const rows=[];
+    for(let yr=1;yr<=y;yr++){
+      for(let m=0;m<12;m++) corpus=(corpus+cur)*(1+mr);
+      inv+=cur*12;
+      rows.push([{v:'Y'+yr},{v:fmt(cur),cls:''},{v:fmt(inv)},{v:fmt(corpus-inv),cls:'g'},{v:fmt(corpus),cls:'a'}]);
+      cur=Math.round(cur*(1+sp/100));
+    }
+    const extra=corpus-sipFV(sM,r,y);
+    SET('su-vinv',fmt(inv)); SET('su-vret',fmt(corpus-inv)); SET('su-vtot',fmt(corpus));
+    SET('su-vs',(extra>=0?'+':'')+fmt(extra)+' more than flat SIP');
+    buildTable('su-tbody',rows);
+    showRes('su-empty','su-res');
+    ld?.classList.remove('on');
+  },280);
+}
+
+function calcEMI(){
+  const P=V('emi-a'),ar=V('emi-r'),y=V('emi-y');
+  if(!P||!ar||!y) return;
+  if(!val2('emi-a','emi-aerr',1000,1e8)) return;
+  const emi=emiAmt(P,ar,y),tot=emi*y*12,int=tot-P,r=ar/100/12;
+  SET('emi-vemi',fmt(emi)); SET('emi-vpri',fmt(P)); SET('emi-vint',fmt(int));
+  donut('donut-emi',P,int,'#8888aa','#f76a6a');
+  SET('emi-dc',fmtC(tot));
+  SET('emi-lpri',fmt(P));  SET('emi-lprip',(P/tot*100).toFixed(1)+'% of total');
+  SET('emi-lint',fmt(int)); SET('emi-lintp',(int/tot*100).toFixed(1)+'% of total');
+  let bal=P;
+  buildTable('emi-tbody',Array.from({length:y},(_,i)=>{
+    const yr=i+1; let yP=0,yI=0;
+    for(let m=0;m<12;m++){const im=bal*r,pm=emi-im;yI+=im;yP+=pm;bal=Math.max(0,bal-pm);}
+    return [{v:'Y'+yr},{v:fmt(yP)},{v:fmt(yI),cls:'r'},{v:fmt(yP+yI)},{v:fmt(Math.max(0,bal)),cls:'a'}];
+  }));
+  showRes('emi-empty','emi-res');
+}
+
+function calcCAGR(){
+  const ini=V('cagr-i'),fin=V('cagr-f'),y=V('cagr-y');
+  if(!ini||!fin||!y) return;
+  const cagr=(Math.pow(fin/ini,1/y)-1)*100;
+  const abs=((fin-ini)/ini*100).toFixed(1);
+  SET('cagr-vrate',fmtP(cagr)); SET('cagr-vabs',abs+'%'); SET('cagr-vmul',(fin/ini).toFixed(2)+'x');
+  const g=cagr>=14?'🚀 Excellent':cagr>=11?'✅ Good':cagr>=7?'👍 Decent':'⚠️ Below Avg';
+  const bmarks=[['FD (Bank)','6–7%'],['Debt MF','7–9%'],['Balanced MF','10–12%'],['Large-cap MF','11–14%'],['Nifty 50','~13%'],['Small-cap MF','14–18%']];
+  buildTable('cagr-tbody',bmarks.map(([nm,typ])=>[
+    {v:nm,cls:'',style:'text-align:left;padding-left:12px;color:var(--t2)'},
+    {v:typ},{v:fmtP(cagr)+' '+g,cls:'g'}
+  ]));
+  showRes('cagr-empty','cagr-res');
+}
+
+function calcSWP(){
+  let corpus=V('swp-c'),w=V('swp-w'),r=V('swp-r');
+  if(!corpus||!w||!r) return;
+  const init=corpus,mr=r/100/12;
+  let mo=0,tot=0,gain=0;
+  while(corpus>0&&mo<1200){
+    const g=corpus*mr; gain+=g; corpus+=g-w; tot+=w; mo++;
+    if(corpus<=w) break;
+  }
+  const yr=Math.floor(mo/12),mn=mo%12;
+  const dur=mo>=1200?'> 100 years':(yr>0?yr+' yr '+(mn?mn+' mo':''):mn+' months');
+  SET('swp-vdur',dur); SET('swp-vtot',fmt(tot)); SET('swp-vgain',fmt(gain));
+  const sust=w<=init*mr;
+  G('swp-tip').innerHTML=sust
+    ?`✅ <strong>Sustainable SWP.</strong> Monthly returns (~${fmt(init*mr)}) cover withdrawals. Corpus may last indefinitely.`
+    :`⚠️ <strong>Corpus depletes in ${dur}.</strong> Consider reducing withdrawal to ~${fmt(init*mr)} or increasing corpus.`;
+  showRes('swp-empty','swp-res');
+}
+
+function calcInflation(){
+  const amt=V('inf-a'),r=V('inf-r')/100,y=V('inf-y');
+  if(!amt||!r||!y) return;
+  const fut=amt*Math.pow(1+r,y),lost=fut-amt,remP=(amt/fut*100).toFixed(1);
+  SET('inf-vfut',fmt(fut)); SET('inf-vnow',fmt(amt)); SET('inf-vlost',fmt(lost));
+  donut('donut-inf',amt,lost,'#3ecf8e','#f76a6a');
+  SET('inf-dc',remP+'%');
+  SET('inf-lrem',fmt(amt));  SET('inf-lremp',remP+'% remains');
+  SET('inf-lero',fmt(lost));  SET('inf-lerop',(100-+remP).toFixed(1)+'% eroded');
+  showRes('inf-empty','inf-res');
+}
+
+function calcGoal(){
+  const tgt=V('goal-t'),y=V('goal-y'),mr=V('goal-r')/100/12;
+  const saved=V('goal-s'),name=G('goal-name')?.value||'Your Goal';
+  if(!tgt||!y||!mr) return;
+  const n=y*12,sFV=saved*Math.pow(1+mr,n);
+  const rem=Math.max(0,tgt-sFV);
+  const sip=rem*(mr/(Math.pow(1+mr,n)-1))/(1+mr);
+  const inv=sip*n,ret=tgt-inv-saved;
+  SET('goal-vsip',fmt(sip)); SET('goal-vinv',fmt(inv)); SET('goal-vret',fmt(Math.max(0,ret)));
+  G('goal-tip').innerHTML=`🎯 Invest <strong>${fmt(sip)}/month</strong> for <strong>${y} years</strong> to reach <strong>"${name}"</strong> (${fmt(tgt)}).`
+    +(saved>0?` Your savings cover ${fmtC(sFV)} of the goal.`:'')+' Starting earlier significantly reduces the required amount.';
+  showRes('goal-empty','goal-res');
+}
+
+/* ── PDF EXPORT ─────────────────────────────────────────── */
+function exportPDF(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const P=V('sip-m'),r=V('sip-r'),y=V('sip-y');
+  const T=sipFV(P,r,y),I=P*y*12,R=T-I;
+  doc.setFillColor(7,7,15); doc.rect(0,0,210,297,'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(20);
+  doc.setTextColor(180,170,255);
+  doc.text('SIP Wealth Projection',105,20,{align:'center'});
+  doc.setFontSize(9); doc.setTextColor(120,120,160);
+  doc.text('FinSuite Pro · '+new Date().toLocaleDateString('en-IN')+' · Currency: '+CX,105,28,{align:'center'});
+  doc.setFillColor(18,18,42); doc.roundedRect(14,34,182,34,4,4,'F');
+  const s=[['Monthly SIP',fmt(P)],['Duration',y+' yrs'],['Return',r+'%'],['Invested',fmt(I)],['Returns',fmt(R)],['Corpus',fmt(T)]];
+  s.forEach((item,i)=>{
+    const x=18+(i%3)*62,yy=i<3?42:56;
+    doc.setFontSize(8);doc.setTextColor(100,100,140);doc.text(item[0],x,yy);
+    doc.setFontSize(9);doc.setTextColor(200,195,255);doc.setFont('helvetica','bold');
+    doc.text(item[1],x,yy+5);doc.setFont('helvetica','normal');
+  });
+  const rv=r/100/12,rows=[];
+  for(let yr=1;yr<=y;yr++){const n=yr*12,c=P*((Math.pow(1+rv,n)-1)/rv)*(1+rv),iv=P*n;rows.push(['Year '+yr,fmt(iv),fmt(c-iv),fmt(c)]);}
+  doc.autoTable({startY:75,head:[['Year','Invested','Returns','Corpus']],body:rows,theme:'plain',
+    styles:{font:'helvetica',fontSize:9,textColor:[175,172,220],fillColor:[12,12,28],lineColor:[40,40,80],lineWidth:.2,cellPadding:3},
+    headStyles:{fillColor:[22,22,52],textColor:[108,99,255],fontStyle:'bold',fontSize:9},
+    alternateRowStyles:{fillColor:[16,16,38]}});
+  doc.setFontSize(7);doc.setTextColor(55,55,90);
+  doc.text('Estimates only. Not financial advice. Consult a SEBI-registered advisor.',105,290,{align:'center'});
+  doc.save('SIP-FinSuite-Pro.pdf');
+}
+
+/* ── AI CHAT ────────────────────────────────────────────── */
+async function sendMsg(){
+  const inp=G('chat-inp');
+  const text=inp.value.trim(); if(!text) return;
+  addMsg('user',text);
+  inp.value=''; inp.style.height='auto';
+  G('send-btn').disabled=true;
+  const typing=addTyping();
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:`You are FinSuite AI, a knowledgeable personal finance assistant for Indian markets. Help with SIP, EMI, CAGR, SWP, inflation, goal planning, mutual funds, ELSS, PPF, NPS, tax (80C, 80D), budgeting. Use ${CUR[CX].sym} for currency. Keep responses concise. Always note responses are educational, not personalised advice.`,
+        messages:[{role:'user',content:text}]
+      })
+    });
+    const data=await res.json();
+    const reply=data.content?.map(b=>b.text||'').join('\n')||'Sorry, could not process that.';
+    typing.remove(); addMsg('ai',reply);
+  }catch(e){ typing.remove(); addMsg('ai','⚠️ Connection issue. Please try again.'); }
+  G('send-btn').disabled=false;
+}
+function addMsg(role,text){
+  const msgs=G('chat-msgs');
+  const div=document.createElement('div');
+  div.className='msg '+role;
+  div.innerHTML=`<div class="msg-name">${role==='user'?'You':'FinSuite AI'}</div><div class="msg-bubble">${text.replace(/\n/g,'<br/>')}</div>`;
+  msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight; return div;
+}
+function addTyping(){
+  const msgs=G('chat-msgs');
+  const div=document.createElement('div');
+  div.className='msg ai';
+  div.innerHTML=`<div class="msg-name">FinSuite AI</div><div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight; return div;
+}
+
+/* ── INIT ───────────────────────────────────────────────── */
+(function init(){
+  // Restore currency
+  G('cur-sel').value=CX;
+  _syms(); _fxbadge();
+
+  // Restore last panel
+  const p=localStorage.getItem('fs_panel');
+  if(p){const n=document.querySelector(`.nav-item[onclick*="'${p}'"]`);if(n)showPanel(p,n);}
+
+  // Pre-fill all live labels
+  _relbl();
+  LBL_MAP.forEach(([i,l,t])=>lbl(i,l,t));
+
+  // Init slider fills
+  document.querySelectorAll('input[type=range]').forEach(fs);
+})();
+</script>
+</body>
+</html>
